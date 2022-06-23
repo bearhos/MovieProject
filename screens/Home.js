@@ -154,7 +154,6 @@ const Home = ({navigation}) => {
         columns={2}
         backgroundColor="#15141f"
         spacing={4}
-   
         completeCustomComponent={props => <MasonryComponent {...props} navigatione={navigation}  tabActive={tabActive} />}
       />
     </Container>

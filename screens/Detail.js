@@ -1,4 +1,4 @@
-import { View, Text,FlatList,Animated, Image,ImageBackground, ScrollView } from 'react-native'
+import { View, Text,FlatList,Animated, Image,ImageBackground, ScrollView, Linking } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components/native'
 import Header from '../components/Details/Header'
@@ -10,7 +10,7 @@ import DummyText from '../components/Details/DummyText'
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from "react-native-linear-gradient"
 import { useDispatch, useSelector } from 'react-redux'
-import { getStatusWishList, getAddWishList} from '../API/redux/movieSlice'
+import { getStatusWishList, getAddWishList, getDetail, getRemoveWishList, getVideo} from '../API/redux/movieSlice'
 
 
 
@@ -43,21 +43,22 @@ const HeartIcon = styled.View`
 
 const Detail = ({navigation,route}) => {
   const [idItem, setId] = useState('')
-  const [like, setLike] = useState(false)
+ 
   const scrollA = useRef(new Animated.Value(0)).current;
   const [movieItem, setMovieItems] = useState([])
   const [Details, setDetaisItems] = useState([])
   const [genres, setGenres] = useState([])
+  const [like, setLike] = useState(false)
   const [value, setvalues] = useState({
     
   })
-  const statusList = useSelector(state => state.movies.statusList)
-  dispatch = useDispatch();
+  const {details,statusList,wishList,moviesList,video} = useSelector((state) => ({...state.movies}))
+  const dispatch = useDispatch()
 useEffect(() => {
-  
-  dispatch(getStatusWishList({movie_id:route.params.id, page: 1}))
 
-  setLike(statusList)
+  dispatch(getStatusWishList(route.params.id))
+  dispatch(getVideo([route.params.cate,route.params.id]))
+  
   const getMovies = async () =>{
     const params = {page:1}
     try{
@@ -69,31 +70,31 @@ useEffect(() => {
       console.log(err)
     }
   }
-  
-  const getDetails = async () =>{
-
-    setId(route.params.id)
-    
-    try{
-      const response = await movieAPI.detail(route.params.cate, route.params.id, {params:{}});
-      setDetaisItems(response)
-      setGenres(response.genres)
-    }
-    catch (err){
-      console.log(err)
-    }
-  }
+ 
   getMovies()
-  getDetails()
-  
-}, [setLike,dispatch])
+  dispatch(getDetail([route.params.cate, route.params.id]))
+  setDetaisItems(details)
+  setGenres(details?.genres)
+  setLike(statusList)
+}, [dispatch,setLike,like])
+
+
 const AddList = () =>{
+  setLike(!like)
   setvalues({
     media_id: idItem
   })
   dispatch(getAddWishList({
     media_id: route.params.id
 }))
+}
+const RemoveList = () =>{
+  setLike(!like)
+  dispatch(getRemoveWishList({
+    media_id: route.params.id
+}))
+
+
 }
   return (
    <Container>
@@ -108,7 +109,7 @@ const AddList = () =>{
         <View style={styles.bannerContainer}>
           <Animated.Image
             style={styles.banner(scrollA)}
-            source={{uri: `${apiConfig.originalImage(Details.backdrop_path)}`}}
+            source={{uri: `${apiConfig.originalImage(details?.backdrop_path)}`}}
           >
           </Animated.Image>
         </View>
@@ -127,15 +128,15 @@ const AddList = () =>{
 
           </LinearGradient>
           <Playbutton  > 
-            <Icon name="play" size={45} color="rgba(255, 162, 3, 0.93)">
+            <Icon name="play" size={45} color="rgba(255, 162, 3, 0.93)" onPress={() => Linking.openURL(`https://www.youtube.com/watch?v=${video?.key}`)}>
             </Icon>
           </Playbutton>
           <HeartIcon >
-            {statusList ?   <Icon name="heart-sharp" color="red" size={45} onPress={ ()=> setLike(!like)}></Icon> : <Icon name="heart-outline" color="white" size={45} onPress={ ()=> AddList()}></Icon>}
+            {  statusList ?   <Icon name="heart-sharp" color="red" size={45}  onPress={ ()=> RemoveList()}></Icon> : <Icon name="heart-outline" color="white" size={45} onPress={ ()=> AddList()}></Icon>}
             
           </HeartIcon>
          
-        <Content movieItem={movieItem} Details={Details} genres={genres}></Content>
+        <Content movieItem={movieItem} Details={details} genres={genres} video={video}></Content>
       </Animated.ScrollView>
    </Container>
   )

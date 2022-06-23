@@ -129,7 +129,7 @@ const QualityText = styled.Text`
   margin: ${props => (props.margin ? '10px 0px' : '0px')};
 
 `;
-const Content = ({movieItem,Details,genres}) => {
+const Content = ({movieItem,Details,genres,video}) => {
 
  
   
@@ -148,13 +148,13 @@ const Content = ({movieItem,Details,genres}) => {
       <TitleContainer>
 
       <Title size={25} marginTop={20} >
-        {Details.title ||Details.name }
+        {Details?.title ||Details?.name }
       </Title>
-      <Quality><QualityText center>4K</QualityText></Quality>
+      <Quality><QualityText center>{video?.size}</QualityText></Quality>
       </TitleContainer>
       <ReatingContainer>
-      <SubText><Icon name="stopwatch-outline" size={16} color="white"></Icon> {Details.runtime ? Details.runtime + ' minutes' : Details.number_of_episodes +' episode' } </SubText>
-      <SubText><Icon name="star" size={16} color="white"></Icon> {Details.vote_average} (IMDb)</SubText>
+      <SubText><Icon name="stopwatch-outline" size={16} color="white"></Icon> {Details?.runtime ? Details?.runtime + ' minutes' : Details?.number_of_episodes +' episode' } </SubText>
+      <SubText><Icon name="star" size={16} color="white"></Icon> {Details?.vote_average} (IMDb)</SubText>
       </ReatingContainer>
 
       <Divider />
@@ -163,7 +163,7 @@ const Content = ({movieItem,Details,genres}) => {
         <TimeContainer>
           <Title size={20}>Release Date</Title>
           <SubText size={14} margin>
-            {Details.release_date || Details.first_air_date} 
+            {Details?.release_date || Details?.first_air_date} 
           </SubText>
         </TimeContainer>
         <GenreContainer>
@@ -171,7 +171,7 @@ const Content = ({movieItem,Details,genres}) => {
           <GenreBox>
             
               
-                {genres.map((item,key)=>{
+                {Details?.genres.map((item,key)=>{
                   return(
                     <Genre key={item.id}>
 
@@ -217,7 +217,7 @@ const Content = ({movieItem,Details,genres}) => {
             );}}>
       
           <SubText>
-           {Details.overview ? Details.overview :'Rey (Daisy Ridley) finally manages to find the legendary Jedi knight, Luke Skywalker (Mark Hamill) on an island with a magical aura. The heroes of The Force Awakens including Leia, Finn Read more..'}
+           {Details?.overview ? Details?.overview :'Rey (Daisy Ridley) finally manages to find the legendary Jedi knight, Luke Skywalker (Mark Hamill) on an island with a magical aura. The heroes of The Force Awakens including Leia, Finn Read more..'}
            </SubText>
         </ReadMore>
       </View>

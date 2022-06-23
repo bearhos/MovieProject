@@ -1,7 +1,6 @@
 import { View, Text,TouchableOpacity,Image } from 'react-native'
 import React, { useMemo } from 'react'
 import FastImage from 'react-native-fast-image'
-import apiConfig from '../API/apiConfig'
 
 const MasonryComponent = (props,{tabActive}) => {
     

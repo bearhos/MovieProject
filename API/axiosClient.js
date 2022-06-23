@@ -10,7 +10,7 @@ const axiosClient = axios.create({
         'Content-Type': 'application/json',
         'Accept' : 'application/json'
     },
-    paramsSerializer: params => queryString.stringify({...params, api_key: apiConfig.apiKey})
+    paramsSerializer: params => queryString.stringify({...params})
 });
 
 axiosClient.interceptors.request.use(async (config) => config);
@@ -22,28 +22,11 @@ axiosClient.interceptors.response.use((response) => {
 
     return response;
 }, (error) => {
+    console.error('Status:', error.response.status);
+    console.error('Data:', error.response.data);
+    console.error('Headers:', error.response.headers);
    console.log(JSON.stringify(error))
     throw error;
+    
 });
-export const UserClient = axios.create({
-    baseURL: apiConfig.baseUrl,
-    headers: {
-        'Accept' : 'application/json'
-    },
-    paramsSerializer: params => queryString.stringify({...params, api_key: apiConfig.apiKey, session_id: '112cf99b660c15fd3a605b98ba68bf30bde46ca4'})
-});
-
-axiosClient.interceptors.request.use(async (config) => config);
-
-axiosClient.interceptors.response.use((response) => {
-    if (response && response.data) {
-        return response.data;
-    }
-
-    return response;
-}, (error) => {
-   console.log(JSON.stringify(error))
-    throw error;
-});
-
 export default axiosClient;
